@@ -8,7 +8,7 @@ ExLua
 [![Coveralls.io code coverage](https://img.shields.io/coveralls/bendiken/exlua/master.svg)](https://coveralls.io/github/bendiken/exlua)
 [![Gratipay](https://img.shields.io/gratipay/user/bendiken.svg)](https://gratipay.com/~bendiken/)
 
-Lua for Elixir.
+Lua for Elixir, based on [Luerl](https://github.com/rvirding/luerl).
 
 ## Examples
 
