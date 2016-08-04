@@ -7,6 +7,16 @@ defmodule Lua.State do
 
   @spec new() :: Lua.State.t
   def new do
-    %Lua.State{luerl: :luerl.init()}
+    wrap(:luerl.init())
+  end
+
+  @spec wrap(tuple) :: Lua.State.t
+  def wrap(state) do
+    %Lua.State{luerl: state}
+  end
+
+  @spec unwrap(Lua.State.t) :: tuple
+  def unwrap(%Lua.State{luerl: state}) do
+    state
   end
 end
