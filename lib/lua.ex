@@ -17,13 +17,13 @@ defmodule Lua do
   end
 
   @doc "Evaluates a Lua file."
-  def eval_file(%State{luerl: state}, path) do
-    :luerl.evalfile(path, state)
+  def eval_file(%State{luerl: state}, path)  do
+    :luerl.evalfile(path |> String.to_charlist, state)
   end
 
   @doc "Evaluates a Lua file."
   def eval_file!(%State{luerl: state}, path) do
-    case :luerl.evalfile(path, state) do
+    case :luerl.evalfile(path |> String.to_charlist, state) do
       {:ok, result}    -> result
       {:error, reason} -> raise Error, reason: reason, message: inspect(reason)
     end
