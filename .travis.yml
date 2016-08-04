@@ -1,0 +1,11 @@
+# See: https://travis-ci.org/bendiken/exlua
+
+sudo: false
+
+language: elixir
+elixir:
+  - 1.3.2
+otp_release:
+  - 19.0
+script:
+  - "MIX_ENV=test mix do deps.get, compile, coveralls.travis"
