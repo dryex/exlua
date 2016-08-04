@@ -32,4 +32,10 @@ defmodule Lua do
       {:error, reason} -> raise Error, reason: reason, message: inspect(reason)
     end
   end
+
+  @doc "Performs garbage collection."
+  @spec gc(Lua.State.t) :: Lua.State.t
+  def gc(%State{luerl: state}) do
+    %State{luerl: :luerl.gc(state)}
+  end
 end
