@@ -36,7 +36,7 @@ defmodule Lua.Mixfile do
   end
 
   defp package do
-    [files: ~w(lib mix.exs CHANGES README.md UNLICENSE VERSION),
+    [files: ~w(lib mix.exs CHANGES.md README.md UNLICENSE VERSION),
      maintainers: ["Arto Bendiken"],
      licenses: ["Public Domain"],
      links: %{"GitHub" => @github, "Bitbucket" => @bitbucket}]
