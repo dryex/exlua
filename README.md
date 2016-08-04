@@ -10,22 +10,34 @@ ExLua
 
 Lua for Elixir.
 
+## Examples
+
+```elixir
+  [42.0] = Lua.State.new |> Lua.eval!("return 6 * 7")
+```
+
 ## Installation
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed as:
+Add `exlua` to your list of dependencies in your project's `mix.exs` file:
 
-  1. Add `exlua` to your list of dependencies in `mix.exs`:
+```elixir
+defp deps do
+  [{:exlua, "~> 0.1.0"}]
+end
+```
 
-    ```elixir
-    def deps do
-      [{:exlua, "~> 0.1.0"}]
-    end
-    ```
+Alternatively, to pull in the dependency directly from a Git tag:
 
-  2. Ensure `exlua` is started before your application:
+```elixir
+defp deps do
+  [{:exlua, github: "bendiken/exlua", tag: "0.1.0"}]
+end
+```
 
-    ```elixir
-    def application do
-      [applications: [:exlua]]
-    end
-    ```
+Alternatively, to pull in the dependency directly from a Git branch:
+
+```elixir
+defp deps do
+  [{:exlua, github: "bendiken/exlua", branch: "master"}]
+end
+```
