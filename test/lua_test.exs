@@ -60,4 +60,9 @@ defmodule LuaTest do
     assert {%Lua.State{}, [42.0]} = Lua.call_function!(Lua.State.new, [:math, :abs], [-42])
     assert_raise ErlangError, fn -> Lua.call_function!(Lua.State.new, [:foo, :bar], []) end
   end
+
+  test "Lua.set_table/3" do
+    assert [42.0] = Lua.State.new |> Lua.set_table([:val], 42) |> Lua.eval!("return val")
+    assert [42.0] = Lua.State.new |> Lua.set_table([:inc], fn s, [x] -> {s, [x+1]} end) |> Lua.eval!("return inc(41)")
+  end
 end

@@ -96,4 +96,22 @@ defmodule Lua do
       {result, state} -> {%State{luerl: state}, result}
     end
   end
+
+  @doc "Sets a table index to the given value."
+  @spec set_table(Lua.State.t, [atom], any) :: Lua.State.t
+  def set_table(%State{luerl: state}, name, value) when is_list(name) do
+    value = case value do
+      f when is_function(f) -> wrap_callback(f)
+      v -> v
+    end
+    %State{luerl: :luerl.set_table(name, value, state)}
+  end
+
+  @spec wrap_callback(fun) :: fun
+  defp wrap_callback(function) do
+    fn args, state ->
+      {%State{luerl: state}, result} = function.(State.wrap(state), args)
+      {result, state}
+    end
+  end
 end
