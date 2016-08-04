@@ -49,8 +49,15 @@ defmodule LuaTest do
     assert_raise Lua.Error, fn -> Lua.load_file!(Lua.State.new, "test/scripts/_enoent.lua") end
   end
 
+  test "Lua.call_chunk!/3" do
+    {state, chunk} = Lua.load!(Lua.State.new, "return 42")
+    assert {%Lua.State{}, [42.0]} = Lua.call_chunk!(state, chunk, [])
+    {state, chunk} = Lua.load!(Lua.State.new, "return foobar()")
+    assert_raise ErlangError, fn -> Lua.call_chunk!(state, chunk, []) end
+  end
+
   test "Lua.call_function!/3" do
-    assert {%Lua.State{}, _} = Lua.call_function!(Lua.State.new, [:math, :abs], [-42])
+    assert {%Lua.State{}, [42.0]} = Lua.call_function!(Lua.State.new, [:math, :abs], [-42])
     assert_raise ErlangError, fn -> Lua.call_function!(Lua.State.new, [:foo, :bar], []) end
   end
 end

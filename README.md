@@ -26,6 +26,7 @@ https://hexdocs.pm/exlua/
 | :-------------------- | :-------------------- | :-------------------- |
 | `Lua.Error`           | `{:error, ...}`       | `luaL_error`          |
 | `Lua.State.new`       | `luerl:init`          | `luaL_newstate`       |
+| `Lua.call_chunk!`     | `luerl:call_chunk`    | `lua_pcall`           |
 | `Lua.call_function!`  | `luerl:call_function` | `lua_pcall`           |
 | `Lua.eval`            | `luerl:eval`          | `luaL_dostring`       |
 | `Lua.eval!`           | `luerl:eval`          | `luaL_dostring`       |

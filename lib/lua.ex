@@ -39,7 +39,7 @@ defmodule Lua do
     end
   end
 
-  @doc "Compiles a Lua code snippet."
+  @doc "Compiles a Lua code snippet into a chunk."
   @spec load(Lua.State.t, binary) :: {:ok, Lua.State.t, Lua.Chunk.t} | {:error, any, any}
   def load(%State{luerl: state}, code) do
     case :luerl.load(code, state) do
@@ -49,7 +49,7 @@ defmodule Lua do
     end
   end
 
-  @doc "Compiles a Lua code snippet."
+  @doc "Compiles a Lua code snippet into a chunk."
   @spec load!(Lua.State.t, binary) :: {Lua.State.t, Lua.Chunk.t}
   def load!(%State{luerl: state}, code) do
     case :luerl.load(code, state) do
@@ -60,7 +60,7 @@ defmodule Lua do
     end
   end
 
-  @doc "Compiles a Lua source file."
+  @doc "Compiles a Lua source file into a chunk."
   @spec load_file(Lua.State.t, binary) :: {:ok, Lua.State.t, Lua.Chunk.t} | {:error, any, any}
   def load_file(%State{luerl: state}, filepath) do
     case :luerl.loadfile(filepath |> String.to_charlist, state) do
@@ -70,7 +70,7 @@ defmodule Lua do
     end
   end
 
-  @doc "Compiles a Lua source file."
+  @doc "Compiles a Lua source file into a chunk."
   @spec load_file!(Lua.State.t, binary) :: {Lua.State.t, Lua.Chunk.t}
   def load_file!(%State{luerl: state}, filepath) do
     case :luerl.loadfile(filepath |> String.to_charlist, state) do
@@ -81,9 +81,17 @@ defmodule Lua do
     end
   end
 
+  @doc "Calls a Lua compiled chunk."
+  @spec call_chunk!(Lua.State.t, Lua.Chunk.t, [any]) :: {Lua.State.t, [any]}
+  def call_chunk!(%State{luerl: state}, %Chunk{luerl: chunk}, args \\ []) when is_list(args) do
+    case :luerl.call_chunk(chunk, args, state) do
+      {result, state} -> {%State{luerl: state}, result}
+    end
+  end
+
   @doc "Calls a Lua function."
-  @spec call_function!(Lua.State.t, [atom], [any]) :: {Lua.State.t, any}
-  def call_function!(%State{luerl: state}, name, args) do
+  @spec call_function!(Lua.State.t, [atom], [any]) :: {Lua.State.t, [any]}
+  def call_function!(%State{luerl: state}, name, args \\ []) when is_list(name) and is_list(args) do
     case :luerl.call_function(name, args, state) do
       {result, state} -> {%State{luerl: state}, result}
     end
