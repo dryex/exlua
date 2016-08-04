@@ -25,6 +25,16 @@ defmodule LuaTest do
     assert_raise Lua.Error, fn -> Lua.eval_file!(Lua.State.new, "test/scripts/_enoent.lua") end
   end
 
+  test "Lua.load/2" do
+    assert {:ok, %Lua.State{}, %Lua.Chunk{}} = Lua.load(Lua.State.new, "return 6 * 7")
+    assert {:error, _, _} = Lua.load(Lua.State.new, "foobar")
+  end
+
+  test "Lua.load!/2" do
+    assert {%Lua.State{}, %Lua.Chunk{}} = Lua.load!(Lua.State.new, "return 6 * 7")
+    assert_raise Lua.Error, fn -> Lua.load!(Lua.State.new, "foobar") end
+  end
+
   test "Lua.load_file/2" do
     assert {:ok, %Lua.State{}, %Lua.Chunk{}} = Lua.load_file(Lua.State.new, "test/scripts/hello.lua")
     assert {:error, _, _} = Lua.load_file(Lua.State.new, "test/scripts/_enoent.lua")

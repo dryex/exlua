@@ -33,6 +33,27 @@ defmodule Lua do
     end
   end
 
+  @doc "Compiles a Lua code snippet."
+  @spec load(Lua.State.t, binary) :: {:ok, Lua.State.t, Lua.Chunk.t} | {:error, any, any}
+  def load(%State{luerl: state}, code) do
+    case :luerl.load(code, state) do
+      {:ok, function, state} ->
+        {:ok, %State{luerl: state}, %Chunk{luerl: function}}
+      error -> error
+    end
+  end
+
+  @doc "Compiles a Lua code snippet."
+  @spec load!(Lua.State.t, binary) :: {Lua.State.t, Lua.Chunk.t}
+  def load!(%State{luerl: state}, code) do
+    case :luerl.load(code, state) do
+      {:ok, function, state} ->
+        {%State{luerl: state}, %Chunk{luerl: function}}
+      {:error, reason, _} ->
+        raise Error, reason: reason, message: inspect(reason)
+    end
+  end
+
   @doc "Compiles a Lua source file."
   @spec load_file(Lua.State.t, binary) :: {:ok, Lua.State.t, Lua.Chunk.t} | {:error, any, any}
   def load_file(%State{luerl: state}, filepath) do
