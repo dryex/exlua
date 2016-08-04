@@ -8,4 +8,8 @@ elixir:
 otp_release:
   - 19.0
 script:
-  - "MIX_ENV=test mix do deps.get, compile, coveralls.travis"
+  - MIX_ENV=test mix do deps.get, compile, coveralls.travis
+
+notifications:
+  slack:
+    secure: 0M1yYttbKHgafxG61HH7r89TEJ90aIsH26OW9u6qIZe64eca0naL06ZA4vu0D7Xprr0HTUVD2DkKnS64elSuhtvV4FKxPgIiVtV5AjCGgVfN7OQAkzEgweOuBsg5kvDm+I/PZV22rlsr7oBcbRgmX3b24e1Ydp/aouEtZ+LOuEUeHy4HVinLswYPQgn80+NbxEK19TDFx+/HIEoAMxLHr7zYoG+mRofxwWc2UjuVpdYXjvjcdvw+H0+bLePLrYzdTzkuTS3KGIrxgsLy+mvxIe8d+P/WgijN8OBPwSzgbwEVzo4ZiEy9TessIljYcIWHDPP7fW4C4ERUl2PdaGoa39PmXkz+4EgpjGrpQx+dZBt3xryYwg/7rKC7iXowc0yiZS9ZN8o/Yv3sj9jejqC4zbkzBPqYU+i2IKnXC2cLS5cmeSb/HWfwiClJfMh+gVXIzvp3cgpEziQT2SG5GAAjgzfgcxgMwhb71K5eMrRAIgHFPvvpbSVve/P5hp7EyndDAC+32MgGhHlO8Ar3j0m5L19+ycJ/v/pA28QdoM8aL8ZD+FEzyjnm5lKJUS7GNu7effEaqPZ6iyS/GZB/A5xA+IX9X1EtaEwj88qz0uS5cXqXemsbT8d5dKUm56aX/EZ1wyqvZ4dQK0+08y9gZigzxK6+PehvjPQ+GDQzTvHtKsw=
