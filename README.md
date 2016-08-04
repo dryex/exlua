@@ -46,7 +46,7 @@ Add `exlua` to your list of dependencies in your project's `mix.exs` file:
 
 ```elixir
 defp deps do
-  [{:exlua, "~> 0.1.0"},
+  [{:exlua, "~> 0.2.0"},
    {:luerl, github: "rvirding/luerl", tag: "v0.3",
             compile: "make && cp src/luerl.app.src ebin/luerl.app"}]
 end
@@ -56,7 +56,7 @@ Alternatively, to pull in the dependency directly from a Git tag:
 
 ```elixir
 defp deps do
-  [{:exlua, github: "bendiken/exlua", tag: "0.1.0"},
+  [{:exlua, github: "bendiken/exlua", tag: "0.2.0"},
    {:luerl, github: "rvirding/luerl", tag: "v0.3",
             compile: "make && cp src/luerl.app.src ebin/luerl.app"}]
 end
