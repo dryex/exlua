@@ -5,6 +5,10 @@ defmodule LuaTest do
 
   doctest Lua
 
+  test "Lua.gc!/1" do
+    assert %Lua.State{} = Lua.gc(Lua.State.new)
+  end
+
   test "Lua.eval/2" do
     assert {:ok, [42.0]} = Lua.eval(Lua.State.new, "return 6 * 7")
     assert {:error, _} = Lua.eval(Lua.State.new, "foobar")
@@ -45,7 +49,8 @@ defmodule LuaTest do
     assert_raise Lua.Error, fn -> Lua.load_file!(Lua.State.new, "test/scripts/_enoent.lua") end
   end
 
-  test "Lua.gc!/1" do
-    assert %Lua.State{} = Lua.gc(Lua.State.new)
+  test "Lua.call_function!/3" do
+    assert {%Lua.State{}, _} = Lua.call_function!(Lua.State.new, [:math, :abs], [-42])
+    assert_raise ErlangError, fn -> Lua.call_function!(Lua.State.new, [:foo, :bar], []) end
   end
 end

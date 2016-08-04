@@ -20,19 +20,22 @@ Examples
 Reference
 ---------
 
-| ExLua (Elixir)    | Luerl (Erlang)    | Lua (C)           |
-| :---------------- | :---------------- | :---------------- |
-| `Lua.Error`       | `{:error, ...}`   | `luaL_error`      |
-| `Lua.State.new`   | `luerl:init`      | `luaL_newstate`   |
-| `Lua.eval`        | `luerl:eval`      | `luaL_dostring`   |
-| `Lua.eval!`       | `luerl:eval`      | `luaL_dostring`   |
-| `Lua.eval_file`   | `luerl:evalfile`  | `luaL_dofile`     |
-| `Lua.eval_file!`  | `luerl:evalfile`  | `luaL_dofile`     |
-| `Lua.load`        | `luerl:load`      | `luaL_loadstring` |
-| `Lua.load!`       | `luerl:load`      | `luaL_loadstring` |
-| `Lua.load_file`   | `luerl:loadfile`  | `luaL_loadfile`   |
-| `Lua.load_file!`  | `luerl:loadfile`  | `luaL_loadfile`   |
-| `Lua.gc`          | `luerl:gc`        | `lua_gc`          |
+https://hexdocs.pm/exlua/
+
+| ExLua (Elixir)        | Luerl (Erlang)        | Lua (C)               |
+| :-------------------- | :-------------------- | :-------------------- |
+| `Lua.Error`           | `{:error, ...}`       | `luaL_error`          |
+| `Lua.State.new`       | `luerl:init`          | `luaL_newstate`       |
+| `Lua.call_function!`  | `luerl:call_function` | `lua_pcall`           |
+| `Lua.eval`            | `luerl:eval`          | `luaL_dostring`       |
+| `Lua.eval!`           | `luerl:eval`          | `luaL_dostring`       |
+| `Lua.eval_file`       | `luerl:evalfile`      | `luaL_dofile`         |
+| `Lua.eval_file!`      | `luerl:evalfile`      | `luaL_dofile`         |
+| `Lua.gc`              | `luerl:gc`            | `lua_gc`              |
+| `Lua.load`            | `luerl:load`          | `luaL_loadstring`     |
+| `Lua.load!`           | `luerl:load`          | `luaL_loadstring`     |
+| `Lua.load_file`       | `luerl:loadfile`      | `luaL_loadfile`       |
+| `Lua.load_file!`      | `luerl:loadfile`      | `luaL_loadfile`       |
 
 Installation
 ------------

@@ -3,6 +3,12 @@
 defmodule Lua do
   alias Lua.{Chunk, Error, State}
 
+  @doc "Performs garbage collection."
+  @spec gc(Lua.State.t) :: Lua.State.t
+  def gc(%State{luerl: state}) do
+    %State{luerl: :luerl.gc(state)}
+  end
+
   @doc "Interprets a Lua code snippet."
   @spec eval(Lua.State.t, binary) :: {:ok, any} | {:error, any}
   def eval(%State{luerl: state}, code) do
@@ -75,9 +81,11 @@ defmodule Lua do
     end
   end
 
-  @doc "Performs garbage collection."
-  @spec gc(Lua.State.t) :: Lua.State.t
-  def gc(%State{luerl: state}) do
-    %State{luerl: :luerl.gc(state)}
+  @doc "Calls a Lua function."
+  @spec call_function!(Lua.State.t, [atom], [any]) :: {Lua.State.t, any}
+  def call_function!(%State{luerl: state}, name, args) do
+    case :luerl.call_function(name, args, state) do
+      {result, state} -> {%State{luerl: state}, result}
+    end
   end
 end
