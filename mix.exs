@@ -54,7 +54,9 @@ defmodule Lua.Mixfile do
      {:dialyxir,    ">= 0.0.0", only: [:dev, :test]},
      {:earmark,     ">= 0.0.0", only: :dev},
      {:ex_doc,      ">= 0.0.0", only: :dev},
-     {:excoveralls, ">= 0.0.0", only: :test}]
+     {:excoveralls, ">= 0.0.0", only: :test},
+     {:luerl,       github: "bendiken/luerl", tag: "v0.3",
+                    compile: "make && cp src/luerl.app.src ebin/luerl.app"}]
   end
 
   defp aliases do
