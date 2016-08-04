@@ -32,12 +32,11 @@ defmodule Lua.Mixfile do
   end
 
   def application do
-    [#mod: {Lua, []},
-     applications: [:logger]]
+    [applications: [:logger]]
   end
 
   defp package do
-    [files: ~w(lib src mix.exs CHANGES README.md UNLICENSE VERSION),
+    [files: ~w(lib mix.exs CHANGES README.md UNLICENSE VERSION),
      maintainers: ["Arto Bendiken"],
      licenses: ["Public Domain"],
      links: %{"GitHub" => @github, "Bitbucket" => @bitbucket}]
