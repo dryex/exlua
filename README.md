@@ -26,16 +26,15 @@ https://hexdocs.pm/exlua/
 
 | ExLua (Elixir)        | Luerl (Erlang)        | Lua                   |
 | :-------------------- | :-------------------- | :-------------------- |
-| atom                  | atom                  | -                     |
-| `nil                  | `'nil'`               | `nil`                 |
+| `nil`                 | `'nil'`               | `nil`                 |
 | `true`, `false`       | `'true'`, `'false'`   | `true`, `false`       |
 | integer               | integer               | number                |
 | float                 | float                 | number                |
 | string (binary)       | binary                | string                |
-| {:function, ...}      | #function{...}        | function              |
-| {:userdata, ...}      | #userdata{...}        | userdata              |
-| {:thread, ...}        | #thread{...}          | thread                |
-| {:table, ...}         | #table{...}           | table                 |
+| `{:function, ...}`    | `#function{...}`      | function              |
+| `{:userdata, ...}`    | `#userdata{...}`      | userdata              |
+| `{:thread, ...}`      | `#thread{...}`        | thread                |
+| `{:table, ...}`       | `#table{...}`         | table                 |
 
 ### Functions
 
