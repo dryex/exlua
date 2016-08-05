@@ -22,6 +22,23 @@ Reference
 
 https://hexdocs.pm/exlua/
 
+### Types
+
+| ExLua (Elixir)        | Luerl (Erlang)        | Lua                   |
+| :-------------------- | :-------------------- | :-------------------- |
+| atom                  | atom                  | -                     |
+| `nil                  | `'nil'`               | `nil`                 |
+| `true`, `false`       | `'true'`, `'false'`   | `true`, `false`       |
+| integer               | integer               | number                |
+| float                 | float                 | number                |
+| string (binary)       | binary                | string                |
+| {:function, ...}      | #function{...}        | function              |
+| {:userdata, ...}      | #userdata{...}        | userdata              |
+| {:thread, ...}        | #thread{...}          | thread                |
+| {:table, ...}         | #table{...}           | table                 |
+
+### Functions
+
 | ExLua (Elixir)        | Luerl (Erlang)        | Lua (C)               |
 | :-------------------- | :-------------------- | :-------------------- |
 | `Lua.Error`           | `{:error, ...}`       | `luaL_error`          |
@@ -38,6 +55,7 @@ https://hexdocs.pm/exlua/
 | `Lua.load_file`       | `luerl:loadfile`      | `luaL_loadfile`       |
 | `Lua.load_file!`      | `luerl:loadfile`      | `luaL_loadfile`       |
 | `Lua.set_table`       | `luerl:set_table`     | `lua_settable`        |
+
 
 Installation
 ------------
