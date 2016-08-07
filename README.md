@@ -15,6 +15,14 @@ Examples
 
 ```elixir
   [42.0] = Lua.State.new |> Lua.eval!("return 6 * 7")
+
+  Lua.State.new
+  |> Lua.set_table([:a], 6)
+  |> Lua.set_table([:b], 7)
+  |> Lua.set_table([:mul], fn st, [a, b] -> {st, [a * b]} end)
+  |> Lua.eval!("return {a = a, b = b, c = mul(a, b)}")
+  |> Enum.at(0)
+  |> Map.new
 ```
 
 Reference
@@ -55,7 +63,6 @@ https://hexdocs.pm/exlua/
 | `Lua.load_file!`      | `luerl:loadfile`      | `luaL_loadfile`       |
 | `Lua.get_table`       | `luerl:get_table`     | `lua_gettable`        |
 | `Lua.set_table`       | `luerl:set_table`     | `lua_settable`        |
-
 
 Installation
 ------------
