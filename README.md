@@ -53,6 +53,7 @@ https://hexdocs.pm/exlua/
 | `Lua.load!`           | `luerl:load`          | `luaL_loadstring`     |
 | `Lua.load_file`       | `luerl:loadfile`      | `luaL_loadfile`       |
 | `Lua.load_file!`      | `luerl:loadfile`      | `luaL_loadfile`       |
+| `Lua.get_table`       | `luerl:get_table`     | `lua_gettable`        |
 | `Lua.set_table`       | `luerl:set_table`     | `lua_settable`        |
 
 

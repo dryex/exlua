@@ -97,6 +97,13 @@ defmodule Lua do
     end
   end
 
+  @doc "Gets a table index."
+  @spec get_table(Lua.State.t, [atom]) :: {Lua.State.t, any}
+  def get_table(%State{luerl: state}, name) when is_list(name) do
+    {result, state} = :luerl.get_table(name, state)
+    {%State{luerl: state}, result}
+  end
+
   @doc "Sets a table index to the given value."
   @spec set_table(Lua.State.t, [atom], any) :: Lua.State.t
   def set_table(%State{luerl: state}, name, value) when is_list(name) do
