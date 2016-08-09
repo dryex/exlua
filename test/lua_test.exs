@@ -61,6 +61,13 @@ defmodule LuaTest do
     assert_raise ErlangError, fn -> Lua.call_function!(Lua.State.new, [:foo, :bar], []) end
   end
 
+  test "Lua.get_global/2" do
+    assert {_, 42.0} = Lua.State.new |> Lua.set_table([:val], 42) |> Lua.get_global(:val)
+    assert {_, nil} = Lua.State.new |> Lua.get_global(:val)
+    assert {_, 42.0} = Lua.State.new |> Lua.set_table([:val], 42) |> Lua.get_global("val")
+    assert {_, nil} = Lua.State.new |> Lua.get_global("val")
+  end
+
   test "Lua.get_table/2" do
     assert {_, 42.0} = Lua.State.new |> Lua.set_table([:val], 42) |> Lua.get_table([:val])
     assert {_, nil} = Lua.State.new |> Lua.get_table([:val])
