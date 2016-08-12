@@ -98,14 +98,32 @@ defmodule Lua do
   end
 
   @doc "Returns the value of a global variable."
+  @spec get_global(Lua.State.t, atom) :: {Lua.State.t, any}
   def get_global(%State{luerl: _} = state, name) when is_atom(name) do
     get_global(state, name |> Atom.to_string)
   end
 
   @doc "Returns the value of a global variable."
+  @spec get_global(Lua.State.t, binary) :: {Lua.State.t, any}
   def get_global(%State{luerl: state}, name) when is_binary(name) do
     {result, state} = :luerl_emul.get_global_key(name, state)
     {%State{luerl: state}, result}
+  end
+
+  @doc "Sets the value of a global variable."
+  @spec set_global(Lua.State.t, atom, any) :: Lua.State.t
+  def set_global(%State{luerl: _} = state, name, value) when is_atom(name) do
+    set_global(state, name |> Atom.to_string, value)
+  end
+
+  @doc "Sets the value of a global variable."
+  @spec set_global(Lua.State.t, binary, any) :: Lua.State.t
+  def set_global(%State{luerl: state}, name, value) when is_binary(name) do
+    value = case value do
+      f when is_function(f) -> {:function, wrap_callback(f)}
+      v -> v
+    end
+    %State{luerl: :luerl_emul.set_global_key(name, value, state)}
   end
 
   @doc "Returns the value of a table index."

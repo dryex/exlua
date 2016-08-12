@@ -17,9 +17,9 @@ Examples
   [42.0] = Lua.State.new |> Lua.eval!("return 6 * 7")
 
   Lua.State.new
-  |> Lua.set_table([:a], 6)
-  |> Lua.set_table([:b], 7)
-  |> Lua.set_table([:mul], fn st, [a, b] -> {st, [a * b]} end)
+  |> Lua.set_global(:a, 6)
+  |> Lua.set_global(:b, 7)
+  |> Lua.set_global(:mul, fn st, [a, b] -> {st, [a * b]} end)
   |> Lua.eval!("return {a = a, b = b, c = mul(a, b)}")
   |> Enum.at(0)
   |> Map.new
@@ -32,37 +32,39 @@ https://hexdocs.pm/exlua/
 
 ### Types
 
-| ExLua (Elixir)        | Luerl (Erlang)        | Lua                   |
-| :-------------------- | :-------------------- | :-------------------- |
-| `nil`                 | `'nil'`               | `nil`                 |
-| `true`, `false`       | `'true'`, `'false'`   | `true`, `false`       |
-| integer               | integer               | number                |
-| float                 | float                 | number                |
-| string (binary)       | binary                | string                |
-| `{:function, ...}`    | `#function{...}`      | function              |
-| `{:userdata, ...}`    | `#userdata{...}`      | userdata              |
-| `{:thread, ...}`      | `#thread{...}`        | thread                |
-| `{:table, ...}`       | `#table{...}`         | table                 |
+| ExLua (Elixir)          | Luerl (Erlang)          | Lua                     |
+| :---------------------- | :---------------------- | :---------------------- |
+| `nil`                   | `'nil'`                 | `nil`                   |
+| `true`, `false`         | `'true'`, `'false'`     | `true`, `false`         |
+| integer                 | integer                 | number                  |
+| float                   | float                   | number                  |
+| string (binary)         | binary                  | string                  |
+| `{:function, ...}`      | `#function{...}`        | function                |
+| `{:userdata, ...}`      | `#userdata{...}`        | userdata                |
+| `{:thread, ...}`        | `#thread{...}`          | thread                  |
+| `{:table, ...}`         | `#table{...}`           | table                   |
 
 ### Functions
 
-| ExLua (Elixir)        | Luerl (Erlang)        | Lua (C)               |
-| :-------------------- | :-------------------- | :-------------------- |
-| `Lua.Error`           | `{:error, ...}`       | `luaL_error`          |
-| `Lua.State.new`       | `luerl:init`          | `luaL_newstate`       |
-| `Lua.call_chunk!`     | `luerl:call_chunk`    | `lua_pcall`           |
-| `Lua.call_function!`  | `luerl:call_function` | `lua_pcall`           |
-| `Lua.eval`            | `luerl:eval`          | `luaL_dostring`       |
-| `Lua.eval!`           | `luerl:eval`          | `luaL_dostring`       |
-| `Lua.eval_file`       | `luerl:evalfile`      | `luaL_dofile`         |
-| `Lua.eval_file!`      | `luerl:evalfile`      | `luaL_dofile`         |
-| `Lua.gc`              | `luerl:gc`            | `lua_gc`              |
-| `Lua.load`            | `luerl:load`          | `luaL_loadstring`     |
-| `Lua.load!`           | `luerl:load`          | `luaL_loadstring`     |
-| `Lua.load_file`       | `luerl:loadfile`      | `luaL_loadfile`       |
-| `Lua.load_file!`      | `luerl:loadfile`      | `luaL_loadfile`       |
-| `Lua.get_table`       | `luerl:get_table`     | `lua_gettable`        |
-| `Lua.set_table`       | `luerl:set_table`     | `lua_settable`        |
+| ExLua (Elixir)          | Luerl (Erlang)          | Lua (C)                 |
+| :---------------------- | :---------------------- | :---------------------- |
+| `Lua.Error`             | `{:error, ...}`         | `luaL_error`            |
+| `Lua.State.new`         | `luerl:init`            | `luaL_newstate`         |
+| `Lua.call_chunk!`       | `luerl:call_chunk`      | `lua_pcall`             |
+| `Lua.call_function!`    | `luerl:call_function`   | `lua_pcall`             |
+| `Lua.eval`              | `luerl:eval`            | `luaL_dostring`         |
+| `Lua.eval!`             | `luerl:eval`            | `luaL_dostring`         |
+| `Lua.eval_file`         | `luerl:evalfile`        | `luaL_dofile`           |
+| `Lua.eval_file!`        | `luerl:evalfile`        | `luaL_dofile`           |
+| `Lua.gc`                | `luerl:gc`              | `lua_gc`                |
+| `Lua.load`              | `luerl:load`            | `luaL_loadstring`       |
+| `Lua.load!`             | `luerl:load`            | `luaL_loadstring`       |
+| `Lua.load_file`         | `luerl:loadfile`        | `luaL_loadfile`         |
+| `Lua.load_file!`        | `luerl:loadfile`        | `luaL_loadfile`         |
+| `Lua.get_global`        | `luerl:get_global_key`  | `lua_getglobal`         |
+| `Lua.get_table`         | `luerl:get_table`       | `lua_gettable`          |
+| `Lua.set_global`        | `luerl:set_global_key`  | `lua_setglobal`         |
+| `Lua.set_table`         | `luerl:set_table`       | `lua_settable`          |
 
 Installation
 ------------
@@ -71,7 +73,7 @@ Add `exlua` to your list of dependencies in your project's `mix.exs` file:
 
 ```elixir
 defp deps do
-  [{:exlua, "~> 0.2.0"},
+  [{:exlua, "~> 0.3.0"},
    {:luerl, github: "bendiken/luerl", branch: "exlua",
             compile: "make && cp src/luerl.app.src ebin/luerl.app"}]
 end
@@ -81,7 +83,7 @@ Alternatively, to pull in the dependency directly from a Git tag:
 
 ```elixir
 defp deps do
-  [{:exlua, github: "bendiken/exlua", tag: "0.2.0"},
+  [{:exlua, github: "bendiken/exlua", tag: "0.3.0"},
    {:luerl, github: "bendiken/luerl", branch: "exlua",
             compile: "make && cp src/luerl.app.src ebin/luerl.app"}]
 end
