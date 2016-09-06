@@ -89,9 +89,17 @@ defmodule Lua do
     end
   end
 
+  def call_function!(state, name, args \\ [])
+
+  @doc "Calls a Lua function."
+  @spec call_function!(Lua.State.t, atom, [any]) :: {Lua.State.t, [any]}
+  def call_function!(%State{luerl: _} = state, name, args) when is_atom(name) and is_list(args) do
+    call_function!(state, [name], args)
+  end
+
   @doc "Calls a Lua function."
   @spec call_function!(Lua.State.t, [atom], [any]) :: {Lua.State.t, [any]}
-  def call_function!(%State{luerl: state}, name, args \\ []) when is_list(name) and is_list(args) do
+  def call_function!(%State{luerl: state}, name, args) when is_list(name) and is_list(args) do
     case :luerl.call_function(name, args, state) do
       {result, state} -> {%State{luerl: state}, result}
     end
