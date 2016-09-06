@@ -2,6 +2,11 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [HEAD] - Unreleased
+### Added
+- Added `Lua.Thread`.
+- Added `Lua.set_global/3`, `Lua.get_global/2`.
+
 ## [0.3.0] - 2016-08-08
 ### Added
 - Added `Lua.get_table/2`.
@@ -18,6 +23,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Initial release implementing `Lua.{eval,eval!,eval_file,eval_file!}/2`.
 
-[Unreleased]: https://github.com/bendiken/exlua/compare/0.3.0...HEAD
+[HEAD]:  https://github.com/bendiken/exlua/compare/0.3.0...HEAD
+[0.4.0]: https://github.com/bendiken/exlua/compare/0.3.0...0.4.0
 [0.3.0]: https://github.com/bendiken/exlua/compare/0.2.0...0.3.0
 [0.2.0]: https://github.com/bendiken/exlua/compare/0.1.0...0.2.0
