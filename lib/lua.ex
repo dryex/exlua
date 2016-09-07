@@ -158,7 +158,7 @@ defmodule Lua do
   end
 
   @doc "Attempts to load a package of the given name."
-  @spec require!(Lua.State.t, binary) :: Lua.State.t
+  @spec require!(Lua.State.t, binary) :: {Lua.State.t, [any]}
   def require!(%State{luerl: _} = state, package_name) when is_binary(package_name) do
     call_function!(state, :require, [package_name])
   end
