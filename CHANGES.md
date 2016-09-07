@@ -6,6 +6,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Added `Lua.Thread`.
 - Added `Lua.set_global/3`, `Lua.get_global/2`.
+- Added `Lua.set_package_path/2`.
 
 ## [0.3.0] - 2016-08-08
 ### Added

@@ -151,6 +151,12 @@ defmodule Lua do
     %State{luerl: :luerl.set_table(name, value, state)}
   end
 
+  @doc "Sets the value of the package.path global variable."
+  @spec set_package_path(Lua.State.t, binary) :: Lua.State.t
+  def set_package_path(%State{luerl: _} = state, path) when is_binary(path) do
+    set_table(state, [:package, :path], path)
+  end
+
   @spec wrap_callback(fun) :: fun
   defp wrap_callback(function) do
     fn args, state ->
