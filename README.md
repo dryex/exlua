@@ -57,12 +57,13 @@ https://hexdocs.pm/exlua/
 | `Lua.eval_file`         | `luerl:evalfile`        | `luaL_dofile`           |
 | `Lua.eval_file!`        | `luerl:evalfile`        | `luaL_dofile`           |
 | `Lua.gc`                | `luerl:gc`              | `lua_gc`                |
+| `Lua.get_global`        | `luerl:get_global_key`  | `lua_getglobal`         |
+| `Lua.get_table`         | `luerl:get_table`       | `lua_gettable`          |
 | `Lua.load`              | `luerl:load`            | `luaL_loadstring`       |
 | `Lua.load!`             | `luerl:load`            | `luaL_loadstring`       |
 | `Lua.load_file`         | `luerl:loadfile`        | `luaL_loadfile`         |
 | `Lua.load_file!`        | `luerl:loadfile`        | `luaL_loadfile`         |
-| `Lua.get_global`        | `luerl:get_global_key`  | `lua_getglobal`         |
-| `Lua.get_table`         | `luerl:get_table`       | `lua_gettable`          |
+| `Lua.require!`          | -                       | `luaL_requiref`         |
 | `Lua.set_global`        | `luerl:set_global_key`  | `lua_setglobal`         |
 | `Lua.set_table`         | `luerl:set_table`       | `lua_settable`          |
 

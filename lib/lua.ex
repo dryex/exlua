@@ -157,6 +157,12 @@ defmodule Lua do
     set_table(state, [:package, :path], path)
   end
 
+  @doc "Attempts to load a package of the given name."
+  @spec require!(Lua.State.t, binary) :: Lua.State.t
+  def require!(%State{luerl: _} = state, package_name) when is_binary(package_name) do
+    call_function!(state, :require, [package_name])
+  end
+
   @spec wrap_callback(fun) :: fun
   defp wrap_callback(function) do
     fn args, state ->
