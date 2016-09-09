@@ -3,6 +3,26 @@
 defmodule Lua do
   alias Lua.{Chunk, Error, State}
 
+  @doc "Encodes an Elixir term as a Lua value."
+  @spec encode(nil | boolean | number | binary | atom) :: nil | boolean | float | binary
+  def encode(term)
+  def encode(nil),   do: nil
+  def encode(false), do: false
+  def encode(true),  do: true
+  def encode(value) when is_integer(value), do: :erlang.float(value)
+  def encode(value) when is_float(value),   do: value
+  def encode(value) when is_binary(value),  do: value
+  def encode(value) when is_atom(value),    do: Atom.to_string(value)
+
+  @doc "Decodes a Lua value as an Elixir term."
+  @spec decode(nil | boolean | number | binary) :: term
+  def decode(value)
+  def decode(nil),   do: nil
+  def decode(false), do: false
+  def decode(true),  do: true
+  def decode(value) when is_number(value), do: value
+  def decode(value) when is_binary(value), do: value
+
   @doc "Performs garbage collection."
   @spec gc(Lua.State.t) :: Lua.State.t
   def gc(%State{luerl: state}) do
