@@ -57,6 +57,7 @@ https://hexdocs.pm/exlua/
 | `Lua.eval_file`         | `luerl:evalfile`        | `luaL_dofile`           |
 | `Lua.eval_file!`        | `luerl:evalfile`        | `luaL_dofile`           |
 | `Lua.exec!`             | `luerl:do`              | `luaL_dostring`         |
+| `Lua.exec_file!`        | `luerl:dofile`          | `luaL_dofile`           |
 | `Lua.gc`                | `luerl:gc`              | `lua_gc`                |
 | `Lua.get_global`        | `luerl:get_global_key`  | `lua_getglobal`         |
 | `Lua.get_table`         | `luerl:get_table`       | `lua_gettable`          |
