@@ -9,10 +9,11 @@ defmodule Lua do
   def encode(nil),   do: nil
   def encode(false), do: false
   def encode(true),  do: true
-  def encode(value) when is_integer(value), do: :erlang.float(value)
-  def encode(value) when is_float(value),   do: value
-  def encode(value) when is_binary(value),  do: value
-  def encode(value) when is_atom(value),    do: Atom.to_string(value)
+  def encode(value) when is_integer(value),  do: :erlang.float(value)
+  def encode(value) when is_float(value),    do: value
+  def encode(value) when is_binary(value),   do: value
+  def encode(value) when is_atom(value),     do: Atom.to_string(value)
+  def encode(value) when is_function(value), do: {:function, wrap_function(value)}
 
   @doc "Decodes a Lua value as an Elixir term."
   @spec decode(nil | boolean | number | binary) :: term
@@ -154,7 +155,7 @@ defmodule Lua do
         k when is_atom(k) -> Atom.to_string(k)
         k when is_binary(k) -> k
       end
-      :luerl_emul.set_table_key(table, k, v, state)
+      :luerl_emul.set_table_key(table, k, encode(v), state)
     end)
     state |> State.wrap()
   end
@@ -162,11 +163,7 @@ defmodule Lua do
   @doc "Sets the value of a global variable."
   @spec set_global(Lua.State.t, binary, any) :: Lua.State.t
   def set_global(%State{luerl: state}, name, value) when is_binary(name) do
-    value = case value do
-      f when is_function(f) -> {:function, wrap_callback(f)}
-      v -> v
-    end
-    %State{luerl: :luerl_emul.set_global_key(name, value, state)}
+    %State{luerl: :luerl_emul.set_global_key(name, encode(value), state)}
   end
 
   @doc "Returns the value of a table index."
@@ -179,11 +176,8 @@ defmodule Lua do
   @doc "Sets a table index to the given value."
   @spec set_table(Lua.State.t, [atom], any) :: Lua.State.t
   def set_table(%State{luerl: state}, name, value) when is_list(name) do
-    value = case value do
-      f when is_function(f) -> wrap_callback(f)
-      v -> v
-    end
-    %State{luerl: :luerl.set_table(name, value, state)}
+    name = Enum.map(name, &Atom.to_string/1)
+    %State{luerl: :luerl_emul.set_table_keys(name, encode(value), state)}
   end
 
   @doc "Sets the value of the package.path global variable."
@@ -198,8 +192,8 @@ defmodule Lua do
     call_function!(state, :require, [package_name])
   end
 
-  @spec wrap_callback(fun) :: fun
-  defp wrap_callback(function) do
+  @spec wrap_function(fun) :: fun
+  defp wrap_function(function) do
     fn args, state ->
       {%State{luerl: state}, result} = function.(State.wrap(state), args)
       {result, state}
