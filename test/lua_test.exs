@@ -75,11 +75,11 @@ defmodule LuaTest do
 
   test "Lua.set_global/3" do
     assert [42.0] = Lua.State.new |> Lua.set_global(:val, 42) |> Lua.eval!("return val")
-    assert [42.0] = Lua.State.new |> Lua.set_global(:inc, fn s, [x] -> {s, [x+1]} end) |> Lua.eval!("return inc(41)")
+    assert [42.0] = Lua.State.new |> Lua.set_global(:inc, fn [x] -> [x+1] end) |> Lua.eval!("return inc(41)")
   end
 
   test "Lua.set_table/3" do
     assert [42.0] = Lua.State.new |> Lua.set_table([:val], 42) |> Lua.eval!("return val")
-    assert [42.0] = Lua.State.new |> Lua.set_table([:inc], fn s, [x] -> {s, [x+1]} end) |> Lua.eval!("return inc(41)")
+    assert [42.0] = Lua.State.new |> Lua.set_table([:inc], fn [x] -> [x+1] end) |> Lua.eval!("return inc(41)")
   end
 end
