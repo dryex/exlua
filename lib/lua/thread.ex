@@ -10,13 +10,14 @@ defmodule Lua.Thread do
 
   @type t :: %Lua.Thread{}
 
-  @spec start_link(binary, Lua.State.t) :: {:ok, pid} | {:error, any, any}
-  def start_link(filepath, state \\ nil) when is_binary(filepath) do
+  @spec start_link(binary, Lua.State.t, GenServer.options)
+    :: GenServer.on_start | {:error, any, any}
+  def start_link(filepath, state \\ nil, options \\ []) when is_binary(filepath) do
     state = state || Lua.State.new
 
     case Lua.load_file(state, filepath) do
       {:ok, state, chunk} ->
-        GenServer.start_link(__MODULE__, [state, chunk])
+        GenServer.start_link(__MODULE__, [state, chunk], options)
 
       error -> error
     end
