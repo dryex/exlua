@@ -15,25 +15,31 @@ defmodule Lua do
   def encode(value) when is_atom(value),     do: Atom.to_string(value)
   def encode(value) when is_function(value), do: {:function, wrap_function(value)}
 
-  @doc "Encodes an Elixir map as a Lua table."
-  @spec encode(Lua.State.t, map) :: {Lua.State.t, {:tref, integer}}
-  def encode(%State{luerl: state}, value) when is_map(value) do
+  @doc "Encodes an Elixir term as a Lua value."
+  @spec encode(Lua.State.t, nil | boolean | number | binary | atom | map) ::
+    {Lua.State.t, nil | boolean | float | binary | {:tref, integer}}
+  def encode(%State{luerl: state}, value) do
+    {state, result} = _encode(state, value)
+    {State.wrap(state), result}
+  end
+
+  @spec _encode(tuple, map) :: {tuple, {:tref, integer}}
+  defp _encode(state, value) when is_map(value) do
     {tref, state} = :luerl_emul.alloc_table(state)
     state = Enum.reduce(value, state, fn({k, v}, state) ->
       k = case k do
         k when is_atom(k) -> Atom.to_string(k)
         k when is_binary(k) -> k
       end
-      {state, v} = encode(state, v)
+      {state, v} = _encode(state, v)
       :luerl_emul.set_table_key(tref, k, v, state)
     end)
-    {State.wrap(state), tref}
+    {state, tref}
   end
 
-  @doc "Encodes an Elixir term as a Lua value."
-  @spec encode(Lua.State.t, nil | boolean | number | binary | atom) ::
-    {Lua.State.t, nil | boolean | float | binary}
-  def encode(%State{} = state, value), do: {state, encode(value)}
+  @spec _encode(tuple, nil | boolean | number | binary | atom) ::
+    {tuple, nil | boolean | float | binary}
+  defp _encode(state, value), do: {state, encode(value)}
 
   @doc "Decodes a Lua value as an Elixir term."
   @spec decode(nil | boolean | number | binary) :: term
