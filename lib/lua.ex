@@ -28,37 +28,44 @@ defmodule Lua do
   @doc "Performs garbage collection."
   @spec gc(Lua.State.t) :: Lua.State.t
   def gc(%State{luerl: state}) do
-    %State{luerl: :luerl.gc(state)}
+    State.wrap(:luerl.gc(state))
   end
 
-  @doc "Interprets a Lua code snippet."
+  @doc "Interprets a Lua code snippet, discarding any side effects."
   @spec eval(Lua.State.t, binary) :: {:ok, any} | {:error, any}
-  def eval(%State{luerl: state}, code) do
+  def eval(%State{luerl: state}, code) when is_binary(code) do
     :luerl.eval(code, state)
   end
 
-  @doc "Interprets a Lua code snippet."
+  @doc "Interprets a Lua code snippet, discarding any side effects."
   @spec eval!(Lua.State.t, binary) :: any
-  def eval!(%State{luerl: state}, code) do
+  def eval!(%State{luerl: state}, code) when is_binary(code) do
     case :luerl.eval(code, state) do
       {:ok, result}    -> result
       {:error, reason} -> raise Error, reason: reason, message: inspect(reason)
     end
   end
 
-  @doc "Interprets a Lua source file."
+  @doc "Interprets a Lua source file, discarding any side effects."
   @spec eval_file(Lua.State.t, binary) :: {:ok, any} | {:error, any}
-  def eval_file(%State{luerl: state}, filepath) do
+  def eval_file(%State{luerl: state}, filepath) when is_binary(filepath) do
     :luerl.evalfile(filepath |> String.to_charlist, state)
   end
 
-  @doc "Interprets a Lua source file."
+  @doc "Interprets a Lua source file, discarding any side effects."
   @spec eval_file!(Lua.State.t, binary) :: any
-  def eval_file!(%State{luerl: state}, filepath) do
+  def eval_file!(%State{luerl: state}, filepath) when is_binary(filepath) do
     case :luerl.evalfile(filepath |> String.to_charlist, state) do
       {:ok, result}    -> result
       {:error, reason} -> raise Error, reason: reason, message: inspect(reason)
     end
+  end
+
+  @doc "Interprets a Lua code snippet."
+  @spec exec!(Lua.State.t, binary) :: any
+  def exec!(%State{luerl: state}, code) when is_binary(code) do
+    {result, state} = :luerl.do(code, state)
+    {State.wrap(state), result}
   end
 
   @doc "Compiles a Lua code snippet into a chunk."
@@ -66,7 +73,7 @@ defmodule Lua do
   def load(%State{luerl: state}, code) do
     case :luerl.load(code, state) do
       {:ok, function, state} ->
-        {:ok, %State{luerl: state}, %Chunk{luerl: function}}
+        {:ok, State.wrap(state), %Chunk{luerl: function}}
       error -> error
     end
   end
@@ -76,7 +83,7 @@ defmodule Lua do
   def load!(%State{luerl: state}, code) do
     case :luerl.load(code, state) do
       {:ok, function, state} ->
-        {%State{luerl: state}, %Chunk{luerl: function}}
+        {State.wrap(state), %Chunk{luerl: function}}
       {:error, reason, _} ->
         raise Error, reason: reason, message: inspect(reason)
     end
@@ -87,7 +94,7 @@ defmodule Lua do
   def load_file(%State{luerl: state}, filepath) do
     case :luerl.loadfile(filepath |> String.to_charlist, state) do
       {:ok, function, state} ->
-        {:ok, %State{luerl: state}, %Chunk{luerl: function}}
+        {:ok, State.wrap(state), %Chunk{luerl: function}}
       error -> error
     end
   end
@@ -97,7 +104,7 @@ defmodule Lua do
   def load_file!(%State{luerl: state}, filepath) do
     case :luerl.loadfile(filepath |> String.to_charlist, state) do
       {:ok, function, state} ->
-        {%State{luerl: state}, %Chunk{luerl: function}}
+        {State.wrap(state), %Chunk{luerl: function}}
       {:error, reason, _} ->
         raise Error, reason: reason, message: inspect(reason)
     end
@@ -107,7 +114,7 @@ defmodule Lua do
   @spec call_chunk!(Lua.State.t, Lua.Chunk.t, [any]) :: {Lua.State.t, [any]}
   def call_chunk!(%State{luerl: state}, %Chunk{luerl: chunk}, args \\ []) when is_list(args) do
     case :luerl.call_chunk(chunk, args, state) do
-      {result, state} -> {%State{luerl: state}, result}
+      {result, state} -> {State.wrap(state), result}
     end
   end
 
@@ -123,7 +130,7 @@ defmodule Lua do
   @spec call_function!(Lua.State.t, [atom], [any]) :: {Lua.State.t, [any]}
   def call_function!(%State{luerl: state}, name, args) when is_list(name) and is_list(args) do
     case :luerl.call_function(name, args, state) do
-      {result, state} -> {%State{luerl: state}, result}
+      {result, state} -> {State.wrap(state), result}
     end
   end
 
@@ -137,7 +144,7 @@ defmodule Lua do
   @spec get_global(Lua.State.t, binary) :: {Lua.State.t, any}
   def get_global(%State{luerl: state}, name) when is_binary(name) do
     {result, state} = :luerl_emul.get_global_key(name, state)
-    {%State{luerl: state}, result}
+    {State.wrap(state), result}
   end
 
   @doc "Sets the value of a global variable."
@@ -164,14 +171,14 @@ defmodule Lua do
   @doc "Sets the value of a global variable."
   @spec set_global(Lua.State.t, binary, any) :: Lua.State.t
   def set_global(%State{luerl: state}, name, value) when is_binary(name) do
-    %State{luerl: :luerl_emul.set_global_key(name, encode(value), state)}
+    State.wrap(:luerl_emul.set_global_key(name, encode(value), state))
   end
 
   @doc "Returns the value of a table index."
   @spec get_table(Lua.State.t, [atom]) :: {Lua.State.t, any}
   def get_table(%State{luerl: state}, name) when is_list(name) do
     {result, state} = :luerl.get_table(name, state)
-    {%State{luerl: state}, result}
+    {State.wrap(state), result}
   end
 
   @doc "Sets a table index to the given value."
@@ -194,7 +201,7 @@ defmodule Lua do
   @spec set_table(Lua.State.t, [atom], any) :: Lua.State.t
   def set_table(%State{luerl: state}, name, value) when is_list(name) do
     name = Enum.map(name, &Atom.to_string/1)
-    %State{luerl: :luerl_emul.set_table_keys(name, encode(value), state)}
+    State.wrap(:luerl_emul.set_table_keys(name, encode(value), state))
   end
 
   @doc "Sets the value of the package.path global variable."
