@@ -193,24 +193,28 @@ defmodule Lua do
     call_function!(state, :require, [package_name])
   end
 
-  @spec wrap_function(([term] -> [term])) :: fun
+  @spec wrap_function(([term] -> nil | [term])) :: fun
   defp wrap_function(function) when is_function(function, 1) do
     fn inputs, state ->
-      inputs  = inputs |> Enum.map(&decode/1)
-      outputs = function.(inputs) |> Enum.map(&encode/1)
-      {outputs, state}
+      inputs = inputs |> Enum.map(&decode/1)
+      case function.(inputs) do
+        nil -> {[], state}
+        outputs when is_list(outputs) ->
+          {outputs |> Enum.map(&encode/1), state}
+      end
     end
   end
 
-  @spec wrap_function((Lua.State.t, [term] -> [term] | {Lua.State.t, [term]})) :: fun
+  @spec wrap_function((Lua.State.t, [term] -> nil | [term] | {Lua.State.t, [term]})) :: fun
   defp wrap_function(function) when is_function(function, 2) do
     # ExLua's callback calling convention is effectively the reverse of Luerl's.
     fn inputs, state ->
       inputs = inputs |> Enum.map(&decode/1)
       case function.(State.wrap(state), inputs) do
-        outputs when is_list(outputs) ->
-          {outputs |> Enum.map(&encode/1), state}
+        {%State{luerl: state}, nil} -> {[], state}
         {%State{luerl: state}, outputs} when is_list(outputs) ->
+          {outputs |> Enum.map(&encode/1), state}
+        outputs when is_list(outputs) ->
           {outputs |> Enum.map(&encode/1), state}
       end
     end
