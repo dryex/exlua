@@ -15,6 +15,26 @@ defmodule Lua do
   def encode(value) when is_atom(value),     do: Atom.to_string(value)
   def encode(value) when is_function(value), do: {:function, wrap_function(value)}
 
+  @doc "Encodes an Elixir map as a Lua table."
+  @spec encode(Lua.State.t, map) :: {Lua.State.t, {:tref, integer}}
+  def encode(%State{luerl: state}, value) when is_map(value) do
+    {tref, state} = :luerl_emul.alloc_table(state)
+    state = Enum.reduce(value, state, fn({k, v}, state) ->
+      k = case k do
+        k when is_atom(k) -> Atom.to_string(k)
+        k when is_binary(k) -> k
+      end
+      {state, v} = encode(state, v)
+      :luerl_emul.set_table_key(tref, k, v, state)
+    end)
+    {State.wrap(state), tref}
+  end
+
+  @doc "Encodes an Elixir term as a Lua value."
+  @spec encode(Lua.State.t, nil | boolean | number | binary | atom) ::
+    {Lua.State.t, nil | boolean | float | binary}
+  def encode(%State{} = state, value), do: {state, encode(value)}
+
   @doc "Decodes a Lua value as an Elixir term."
   @spec decode(nil | boolean | number | binary) :: term
   def decode(value)
@@ -162,17 +182,9 @@ defmodule Lua do
 
   @doc "Sets the value of a global variable."
   @spec set_global(Lua.State.t, binary, map) :: Lua.State.t
-  def set_global(%State{luerl: state}, name, value) when is_binary(name) and is_map(value) do
-    {table, state} = :luerl_emul.alloc_table(state)
-    state = :luerl_emul.set_global_key(name, table, state)
-    state = Enum.reduce(value, state, fn({k, v}, state) ->
-      k = case k do
-        k when is_atom(k) -> Atom.to_string(k)
-        k when is_binary(k) -> k
-      end
-      :luerl_emul.set_table_key(table, k, encode(v), state)
-    end)
-    state |> State.wrap()
+  def set_global(%State{} = state, name, value) when is_binary(name) and is_map(value) do
+    {%State{luerl: state}, tref} = encode(state, value)
+    State.wrap(:luerl_emul.set_global_key(name, tref, state))
   end
 
   @doc "Sets the value of a global variable."
@@ -190,18 +202,10 @@ defmodule Lua do
 
   @doc "Sets a table index to the given value."
   @spec set_table(Lua.State.t, [atom], map) :: Lua.State.t
-  def set_table(%State{luerl: state}, name, value) when is_list(name) and is_map(value) do
+  def set_table(%State{} = state, name, value) when is_list(name) and is_map(value) do
     name = Enum.map(name, &Atom.to_string/1)
-    {table, state} = :luerl_emul.alloc_table(state)
-    state = :luerl_emul.set_table_keys(name, table, state)
-    state = Enum.reduce(value, state, fn({k, v}, state) ->
-      k = case k do
-        k when is_atom(k) -> Atom.to_string(k)
-        k when is_binary(k) -> k
-      end
-      :luerl_emul.set_table_key(table, k, encode(v), state)
-    end)
-    state |> State.wrap()
+    {%State{luerl: state}, tref} = encode(state, value)
+    State.wrap(:luerl_emul.set_table_keys(name, tref, state))
   end
 
   @doc "Sets a table index to the given value."

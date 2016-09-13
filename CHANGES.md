@@ -5,7 +5,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [HEAD] - Unreleased
 ### Added
 - Added `Lua.Thread`.
-- Added `Lua.encode/1`, `Lua.decode/1`.
+- Added `Lua.encode/1`, `Lua.encode/2`, `Lua.decode/1`.
 - Added `Lua.exec!/2`, `Lua.exec_file!/2`.
 - Added `Lua.require!/2`.
 - Added `Lua.set_global/3`, `Lua.get_global/2`.
