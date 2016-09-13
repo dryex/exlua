@@ -113,7 +113,7 @@ defmodule Lua do
 
   @doc "Calls a Lua function."
   @spec call_function!(Lua.State.t, atom, [any]) :: {Lua.State.t, [any]}
-  def call_function!(%State{luerl: _} = state, name, args) when is_atom(name) and is_list(args) do
+  def call_function!(%State{} = state, name, args) when is_atom(name) and is_list(args) do
     call_function!(state, [name], args)
   end
 
@@ -127,7 +127,7 @@ defmodule Lua do
 
   @doc "Returns the value of a global variable."
   @spec get_global(Lua.State.t, atom) :: {Lua.State.t, any}
-  def get_global(%State{luerl: _} = state, name) when is_atom(name) do
+  def get_global(%State{} = state, name) when is_atom(name) do
     get_global(state, name |> Atom.to_string)
   end
 
@@ -140,8 +140,23 @@ defmodule Lua do
 
   @doc "Sets the value of a global variable."
   @spec set_global(Lua.State.t, atom, any) :: Lua.State.t
-  def set_global(%State{luerl: _} = state, name, value) when is_atom(name) do
+  def set_global(%State{} = state, name, value) when is_atom(name) do
     set_global(state, name |> Atom.to_string, value)
+  end
+
+  @doc "Sets the value of a global variable."
+  @spec set_global(Lua.State.t, binary, map) :: Lua.State.t
+  def set_global(%State{luerl: state}, name, value) when is_binary(name) and is_map(value) do
+    {table, state} = :luerl_emul.alloc_table(state)
+    state = :luerl_emul.set_global_key(name, table, state)
+    state = Enum.reduce(value, state, fn({k, v}, state) ->
+      k = case k do
+        k when is_atom(k) -> Atom.to_string(k)
+        k when is_binary(k) -> k
+      end
+      :luerl_emul.set_table_key(table, k, v, state)
+    end)
+    state |> State.wrap()
   end
 
   @doc "Sets the value of a global variable."
@@ -173,13 +188,13 @@ defmodule Lua do
 
   @doc "Sets the value of the package.path global variable."
   @spec set_package_path(Lua.State.t, binary) :: Lua.State.t
-  def set_package_path(%State{luerl: _} = state, path) when is_binary(path) do
+  def set_package_path(%State{} = state, path) when is_binary(path) do
     set_table(state, [:package, :path], path)
   end
 
   @doc "Attempts to load a package of the given name."
   @spec require!(Lua.State.t, binary) :: {Lua.State.t, [any]}
-  def require!(%State{luerl: _} = state, package_name) when is_binary(package_name) do
+  def require!(%State{} = state, package_name) when is_binary(package_name) do
     call_function!(state, :require, [package_name])
   end
 
