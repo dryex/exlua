@@ -187,16 +187,10 @@ defmodule Lua do
   end
 
   @doc "Sets the value of a global variable."
-  @spec set_global(Lua.State.t, binary, map) :: Lua.State.t
-  def set_global(%State{} = state, name, value) when is_binary(name) and is_map(value) do
-    {%State{luerl: state}, tref} = encode(state, value)
-    State.wrap(:luerl_emul.set_global_key(name, tref, state))
-  end
-
-  @doc "Sets the value of a global variable."
   @spec set_global(Lua.State.t, binary, any) :: Lua.State.t
   def set_global(%State{luerl: state}, name, value) when is_binary(name) do
-    State.wrap(:luerl_emul.set_global_key(name, encode(value), state))
+    {state, value} = _encode(state, value)
+    State.wrap(:luerl_emul.set_global_key(name, value, state))
   end
 
   @doc "Returns the value of a table index."
@@ -207,18 +201,11 @@ defmodule Lua do
   end
 
   @doc "Sets a table index to the given value."
-  @spec set_table(Lua.State.t, [atom], map) :: Lua.State.t
-  def set_table(%State{} = state, name, value) when is_list(name) and is_map(value) do
-    name = Enum.map(name, &Atom.to_string/1)
-    {%State{luerl: state}, tref} = encode(state, value)
-    State.wrap(:luerl_emul.set_table_keys(name, tref, state))
-  end
-
-  @doc "Sets a table index to the given value."
   @spec set_table(Lua.State.t, [atom], any) :: Lua.State.t
   def set_table(%State{luerl: state}, name, value) when is_list(name) do
     name = Enum.map(name, &Atom.to_string/1)
-    State.wrap(:luerl_emul.set_table_keys(name, encode(value), state))
+    {state, value} = _encode(state, value)
+    State.wrap(:luerl_emul.set_table_keys(name, value, state))
   end
 
   @doc "Sets the value of the package.path global variable."
