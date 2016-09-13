@@ -175,6 +175,22 @@ defmodule Lua do
   end
 
   @doc "Sets a table index to the given value."
+  @spec set_table(Lua.State.t, [atom], map) :: Lua.State.t
+  def set_table(%State{luerl: state}, name, value) when is_list(name) and is_map(value) do
+    name = Enum.map(name, &Atom.to_string/1)
+    {table, state} = :luerl_emul.alloc_table(state)
+    state = :luerl_emul.set_table_keys(name, table, state)
+    state = Enum.reduce(value, state, fn({k, v}, state) ->
+      k = case k do
+        k when is_atom(k) -> Atom.to_string(k)
+        k when is_binary(k) -> k
+      end
+      :luerl_emul.set_table_key(table, k, encode(v), state)
+    end)
+    state |> State.wrap()
+  end
+
+  @doc "Sets a table index to the given value."
   @spec set_table(Lua.State.t, [atom], any) :: Lua.State.t
   def set_table(%State{luerl: state}, name, value) when is_list(name) do
     name = Enum.map(name, &Atom.to_string/1)
