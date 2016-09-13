@@ -23,6 +23,7 @@ defmodule Lua do
   def decode(true),  do: true
   def decode(value) when is_number(value), do: value
   def decode(value) when is_binary(value), do: value
+  def decode(value), do: value # FIXME
 
   @doc "Performs garbage collection."
   @spec gc(Lua.State.t) :: Lua.State.t
