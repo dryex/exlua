@@ -3,7 +3,7 @@
 defmodule Lua.State do
   defstruct luerl: nil
 
-  @type t :: struct
+  @type t :: %Lua.State{}
 
   @spec new() :: Lua.State.t
   def new do

@@ -8,7 +8,7 @@ defmodule Lua.Thread do
 
   defstruct state: %Lua.State{}, result: nil
 
-  @type t :: struct
+  @type t :: %Lua.Thread{}
 
   @spec start_link(binary, Lua.State.t) :: {:ok, pid} | {:error, any, any}
   def start_link(filepath, state \\ nil) when is_binary(filepath) do

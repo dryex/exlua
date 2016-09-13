@@ -3,5 +3,5 @@
 defmodule Lua.Chunk do
   defstruct luerl: nil
 
-  @type t :: struct
+  @type t :: %Lua.Chunk{}
 end
