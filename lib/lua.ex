@@ -61,11 +61,11 @@ defmodule Lua do
     end
   end
 
-  @doc "Interprets a Lua code snippet."
-  @spec exec!(Lua.State.t, binary) :: any
+  @doc "Interprets a Lua code snippet, for its side effects."
+  @spec exec!(Lua.State.t, binary) :: Lua.State.t
   def exec!(%State{luerl: state}, code) when is_binary(code) do
-    {result, state} = :luerl.do(code, state)
-    {State.wrap(state), result}
+    {_, state} = :luerl.do(code, state)
+    State.wrap(state)
   end
 
   @doc "Compiles a Lua code snippet into a chunk."
