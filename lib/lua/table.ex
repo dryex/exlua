@@ -26,18 +26,25 @@ defmodule Lua.Table do
 
   @spec put(Lua.Table.t, Lua.Table.key, Lua.Table.value) :: Lua.Table.t
   def put(%Lua.Table{tref: tref, version: version, state: state} = table, key, val) do
-    k = keyify(key)
+    k = encode_key(key)
     {state, v} = Lua._encode(state, val)
     state = :luerl_emul.set_table_key(tref, k, v, state)
     %{table | state: state, version: version + 1}
   end
 
-  @spec keyify(key) :: binary
-  defp keyify(key) do
+  @spec encode_key(key) :: binary
+  defp encode_key(key) do
     case key do
       k when is_atom(k)   -> Atom.to_string(k)
       k when is_binary(k) -> k
     end
+  end
+
+  @spec to_map(Lua.Table.t) :: map
+  def to_map(%Lua.Table{tref: tref, state: state} = _table) do
+    Enum.reduce(:luerl.decode(tref, state), %{}, fn {k, v}, map ->
+      Map.put(map, k, v)
+    end)
   end
 end
 
