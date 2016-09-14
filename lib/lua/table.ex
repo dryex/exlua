@@ -14,4 +14,9 @@ defmodule Lua.Table do
     {tref, state} = :luerl_emul.alloc_table(state)
     %Lua.Table{tref: tref, state: state}
   end
+
+  @spec wrap({:tref, integer}, Lua.State.t) :: Lua.Table.t
+  def wrap({:tref, _} = tref, %Lua.State{luerl: state}) do
+    %Lua.Table{tref: tref, state: state}
+  end
 end
