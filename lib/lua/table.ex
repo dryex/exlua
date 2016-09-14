@@ -20,3 +20,11 @@ defmodule Lua.Table do
     %Lua.Table{tref: tref, state: state}
   end
 end
+
+defimpl Inspect, for: Lua.Table do
+  import Inspect.Algebra
+
+  def inspect(%Lua.Table{tref: {:tref, id}}, opts) do
+    concat ["#Lua.Table<", to_doc(id, opts), ">"]
+  end
+end
