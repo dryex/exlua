@@ -5,9 +5,13 @@ defmodule Lua.Table do
   **This interface is experimental and subject to change.**
   """
 
-  defstruct tref: nil, state: nil
+  defstruct tref: nil, version: 0, state: nil
 
   @type t :: %Lua.Table{}
+
+  @type key :: atom | binary
+
+  @type value :: any
 
   @spec new(Lua.State.t) :: Lua.Table.t
   def new(%Lua.State{luerl: state}) do
@@ -19,12 +23,28 @@ defmodule Lua.Table do
   def wrap({:tref, _} = tref, %Lua.State{luerl: state}) do
     %Lua.Table{tref: tref, state: state}
   end
+
+  @spec put(Lua.Table.t, Lua.Table.key, Lua.Table.value) :: Lua.Table.t
+  def put(%Lua.Table{tref: tref, version: version, state: state} = table, key, val) do
+    k = keyify(key)
+    {state, v} = Lua._encode(state, val)
+    state = :luerl_emul.set_table_key(tref, k, v, state)
+    %{table | state: state, version: version + 1}
+  end
+
+  @spec keyify(key) :: binary
+  defp keyify(key) do
+    case key do
+      k when is_atom(k)   -> Atom.to_string(k)
+      k when is_binary(k) -> k
+    end
+  end
 end
 
 defimpl Inspect, for: Lua.Table do
   import Inspect.Algebra
 
-  def inspect(%Lua.Table{tref: {:tref, id}}, opts) do
-    concat ["#Lua.Table<", to_doc(id, opts), ">"]
+  def inspect(%Lua.Table{tref: {:tref, id}, version: version}, opts) do
+    concat ["#Lua.Table<", to_doc(id, opts), "@", to_doc(version, opts), ">"]
   end
 end

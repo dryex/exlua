@@ -24,7 +24,7 @@ defmodule Lua do
   end
 
   @spec _encode(tuple, map) :: {tuple, {:tref, integer}}
-  defp _encode(state, value) when is_map(value) do
+  def _encode(state, value) when is_map(value) do
     {tref, state} = :luerl_emul.alloc_table(state)
     state = Enum.reduce(value, state, fn({k, v}, state) ->
       k = case k do
@@ -39,7 +39,7 @@ defmodule Lua do
 
   @spec _encode(tuple, nil | boolean | number | binary | atom) ::
     {tuple, nil | boolean | float | binary}
-  defp _encode(state, value), do: {state, encode(value)}
+  def _encode(state, value), do: {state, encode(value)}
 
   @doc "Decodes a Lua value as an Elixir term."
   @spec decode(nil | boolean | number | binary) :: term
